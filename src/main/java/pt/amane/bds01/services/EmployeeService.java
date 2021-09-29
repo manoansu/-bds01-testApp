@@ -5,6 +5,8 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,18 @@ public class EmployeeService {
 		} catch (EntityNotFoundException e) {
 			throw new ObjectNotFoundException("Id not found! Id: " + id);
 		}
+	}
+
+	public void delete(Long id) {
+		try {
+			repository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ObjectNotFoundException("Id not found Id:" + id);
+		} catch (DataIntegrityViolationException e) {
+			throw new pt.amane.bds01.services.exception.DataIntegrityViolationException(
+					"Object cannot be delected! Has object associated..");
+		}
+
 	}
 
 }
