@@ -1,6 +1,9 @@
 INSERT INTO tb_department(name) VALUES ('Sales');
 INSERT INTO tb_department(name) VALUES ('Management');
 INSERT INTO tb_department(name) VALUES ('Training');
+INSERT INTO tb_department(name) VALUES ('Braga');
+INSERT INTO tb_department(name) VALUES ('Famalicão');
+INSERT INTO tb_department(name) VALUES ('Porto');
 
 INSERT INTO tb_employee(name, email, department_id) VALUES ('Maria', 'maria@gmail.com', 1);
 INSERT INTO tb_employee(name, email, department_id) VALUES ('Ana', 'ana@gmail.com', 2);
