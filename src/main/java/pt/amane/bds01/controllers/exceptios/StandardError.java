@@ -1,4 +1,4 @@
-package pt.amane.bds01.services.exception;
+package pt.amane.bds01.controllers.exceptios;
 
 import java.io.Serializable;
 import java.time.Instant;
