@@ -34,4 +34,12 @@ public class DepartmentService {
 		return list.stream().map(x -> new DepartmentDTO(x)).collect(Collectors.toList());
 	}
 
+	@Transactional
+	public DepartmentDTO create(DepartmentDTO dto) {
+		Department department = new Department();
+		department.setName(dto.getName());
+		department = repository.save(department);
+		return new DepartmentDTO(department);
+	}
+
 }
