@@ -2,7 +2,11 @@ package pt.amane.bds01.services;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,6 +46,32 @@ public class EmployeeService {
 		emp.setDepartment(new Department(dto.getDepartmentId(), null));
 		emp = repository.save(emp);
 		return new EmployeeDTO(emp);
+	}
+
+	@Transactional
+	public EmployeeDTO update(Long id, EmployeeDTO dto) {
+		try {
+			Employee employee = repository.getOne(id);
+			employee.setName(dto.getName());
+			employee.setEmail(dto.getEmail());
+			employee.setDepartment(new Department(dto.getDepartmentId(), null));
+			employee = repository.save(employee);
+			return new EmployeeDTO(employee);
+		} catch (EntityNotFoundException e) {
+			throw new ObjectNotFoundException("Id not found! Id: " + id);
+		}
+	}
+
+	public void delete(Long id) {
+		try {
+			repository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ObjectNotFoundException("Id not found Id:" + id);
+		} catch (DataIntegrityViolationException e) {
+			throw new pt.amane.bds01.services.exception.DataIntegrityViolationException(
+					"Object cannot be delected! Has object associated..");
+		}
+
 	}
 
 }

@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +36,37 @@ public class DepartmentService {
 	public List<DepartmentDTO> findAll() {
 		List<Department> list = repository.findAll(Sort.by("name"));
 		return list.stream().map(x -> new DepartmentDTO(x)).collect(Collectors.toList());
+	}
+
+	@Transactional
+	public DepartmentDTO create(DepartmentDTO dto) {
+		Department department = new Department();
+		department.setName(dto.getName());
+		department = repository.save(department);
+		return new DepartmentDTO(department);
+	}
+
+	@Transactional
+	public DepartmentDTO update(Long id, DepartmentDTO dto) {
+		try {
+			Department department = repository.getOne(id);
+			department.setName(dto.getName());
+			department = repository.save(department);
+			return new DepartmentDTO(department);
+		} catch (EntityNotFoundException e) {
+			throw new ObjectNotFoundException("Id not found! Id: " + id);
+		}
+	}
+
+	public void delete(Long id) {
+		try {
+			repository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ObjectNotFoundException("Id not found! Id: " + id);
+		} catch (DataIntegrityViolationException e) {
+			throw new pt.amane.bds01.services.exception.DataIntegrityViolationException(
+					"Department cannot be deleted! has employee associated..");
+		}
 	}
 
 }
