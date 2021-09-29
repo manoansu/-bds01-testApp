@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,18 @@ public class DepartmentService {
 		department.setName(dto.getName());
 		department = repository.save(department);
 		return new DepartmentDTO(department);
+	}
+
+	@Transactional
+	public DepartmentDTO update(Long id, DepartmentDTO dto) {
+		try {
+			Department department = repository.getOne(id);
+			department.setName(dto.getName());
+			department = repository.save(department);
+			return new DepartmentDTO(department);
+		} catch (EntityNotFoundException e) {
+			throw new ObjectNotFoundException("Id not found! Id: " + id);
+		}		 
 	}
 
 }
